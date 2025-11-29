@@ -68,18 +68,15 @@ public class MathController {
             @PathVariable ("numberTwo") String numberTwo
     ) throws Exception {
         if (!isNumeric(numberOne) || !isNumeric(numberTwo)) throw new UnsupportedOperationException("Please enter a number");
-        Double soma = sum(numberOne,numberTwo);
-        return soma/2;
+        return sum(numberOne,numberTwo)/2;
     }
 
-    //http:localhost:8080/math/sqrt/5/4
-    @RequestMapping("/sqrt/{numberOne}/{numberTwo}")
+    //http:localhost:8080/math/sqrt/5
+    @RequestMapping("/sqrt/{numberOne}")
     public Double sqrtNumbers(
-            @PathVariable ("numberOne") String numberOne,
-            @PathVariable ("numberTwo") String numberTwo
+            @PathVariable ("numberOne") String numberOne
     ) throws Exception {
-        if (!isNumeric(numberOne) || !isNumeric(numberTwo)) throw new UnsupportedOperationException("Please enter a number");
-        Double soma = sum(numberOne,numberTwo);
-        return Math.sqrt(soma);
+        if (!isNumeric(numberOne)) throw new UnsupportedOperationException("Please enter a number");
+        return Math.sqrt(convertDouble(numberOne));
     }
 }
