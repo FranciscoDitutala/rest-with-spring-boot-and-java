@@ -1,6 +1,8 @@
 package com.ditutala.services;
-
+import com.ditutala.data.dto.PersonDTO;
 import com.ditutala.exception.ResourceNotFoundException;
+import static com.ditutala.mapper.ObjectMapper.parserObject;
+import static com.ditutala.mapper.ObjectMapper.parserObjects;
 import com.ditutala.model.Person;
 import com.ditutala.repository.PersonRepository;
 import org.slf4j.Logger;
@@ -8,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class PersonServices {
@@ -22,23 +23,24 @@ public class PersonServices {
 
         this.personRepository = personRepository;
     }
-    public Person findById(Long id) {
+    public PersonDTO findById(Long id) {
         logger.info("Finding person with id {}", id);
-        return  personRepository.findById(id)
+        var toReturn = personRepository.findById(id)
                 .orElseThrow( () -> new ResourceNotFoundException("No records found for this Id!" ) );
+        return  parserObject(toReturn, PersonDTO.class);
     }
 
-    public List<Person> findAll() {
+    public List<PersonDTO> findAll() {
         logger.info("Finding all persons");
-        return personRepository.findAll();
+        return parserObjects(personRepository.findAll(), PersonDTO.class ) ;
     }
 
-    public Person save(Person person) {
+    public PersonDTO save(PersonDTO person) {
         logger.info("Saving person {}", person);
-        return  personRepository.save(person);
+        return  parserObject(personRepository.save(parserObject(person, Person.class)), PersonDTO.class);
     }
 
-    public Person update(Person person) {
+    public PersonDTO update(PersonDTO person) {
         logger.info("Updating person {}", person);
         Person entity = personRepository.findById(person.getId())
                 .orElseThrow( () -> new ResourceNotFoundException("No records found for this Id!" ) );
@@ -46,8 +48,7 @@ public class PersonServices {
         entity.setLastName(person.getLastName());
         entity.setAddress(person.getAddress());
         entity.setGender(person.getGender());
-
-        return  personRepository.save(entity);
+        return parserObject(personRepository.save(entity), PersonDTO.class);
     }
 
     public void delete(Long Id) {
@@ -56,6 +57,4 @@ public class PersonServices {
                 .orElseThrow( () -> new ResourceNotFoundException("No records found for this Id!" ) );
         personRepository.delete(entity);
     }
-
-
 }
